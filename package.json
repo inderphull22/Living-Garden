@@ -1,0 +1,41 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "client": "vite --host 0.0.0.0",
+    "server": "node server/index.js",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "start": "node server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inderphull22/Living-Garden.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/inderphull22/Living-Garden/issues"
+  },
+  "homepage": "https://github.com/inderphull22/Living-Garden#readme",
+  "dependencies": {
+    "@react-three/fiber": "^9.6.1",
+    "@vitejs/plugin-react": "^6.0.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "three": "^0.184.0",
+    "vite": "^8.0.14"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "typescript": "^6.0.3"
+  },
+  "type": "module"
+}

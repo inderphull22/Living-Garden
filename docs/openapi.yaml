@@ -1,0 +1,140 @@
+openapi: 3.1.0
+info:
+  title: Living Garden API
+  version: 0.1.0
+  description: >
+    OpenAPI-first contract for the single shared Living Garden MVP. Reads advance the ecosystem
+    and return the server-computed stem mix that the client renders with Web Audio.
+servers:
+  - url: /api
+paths:
+  /garden:
+    get:
+      summary: Read and tick the shared garden
+      responses:
+        "200":
+          description: Garden snapshot, catalogs, and server-computed music mix.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GardenResponse"
+  /garden/actions:
+    post:
+      summary: Apply a garden interaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/PlantAction"
+                - $ref: "#/components/schemas/AttractAction"
+                - $ref: "#/components/schemas/SimpleAction"
+      responses:
+        "200":
+          description: Updated garden snapshot and action message.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GardenActionResponse"
+        "400":
+          description: Invalid action or missing resources.
+components:
+  schemas:
+    GardenResponse:
+      type: object
+      required: [garden, catalog, music]
+      properties:
+        garden:
+          type: object
+        catalog:
+          type: object
+        music:
+          $ref: "#/components/schemas/MusicMix"
+    GardenActionResponse:
+      allOf:
+        - $ref: "#/components/schemas/GardenResponse"
+        - type: object
+          required: [ok, message]
+          properties:
+            ok:
+              type: boolean
+            message:
+              type: string
+    MusicMix:
+      type: object
+      required: [tempo, key, dayPhase, weather, mood, stems]
+      properties:
+        tempo:
+          type: integer
+        key:
+          type: array
+          items:
+            type: number
+        dayPhase:
+          type: string
+          enum: [dawn, day, dusk, night]
+        weather:
+          type: string
+          enum: [clear, rain, fog, storm, moonlight]
+        mood:
+          type: object
+        stems:
+          type: array
+          items:
+            $ref: "#/components/schemas/Stem"
+    Stem:
+      type: object
+      required: [id, label, type, frequencies, wave, movement, active, gain, filterHz, pan]
+      properties:
+        id:
+          type: string
+          enum: [ambience, pads, drones, bass, percussion, melodic, vocals, fx]
+        label:
+          type: string
+        type:
+          type: string
+        frequencies:
+          type: array
+          items:
+            type: number
+        wave:
+          type: string
+          enum: [sine, square, sawtooth, triangle]
+        movement:
+          type: number
+        active:
+          type: boolean
+        gain:
+          type: number
+          minimum: 0
+          maximum: 0.72
+        filterHz:
+          type: integer
+        pan:
+          type: number
+    PlantAction:
+      type: object
+      required: [action, species]
+      properties:
+        action:
+          const: plant
+        species:
+          type: string
+          enum: [white, red, lavender, golden, moonbloom]
+    AttractAction:
+      type: object
+      required: [action, species]
+      properties:
+        action:
+          const: attract
+        species:
+          type: string
+          enum: [butterfly, firefly, beetle, moth, dragonfly]
+    SimpleAction:
+      type: object
+      required: [action]
+      properties:
+        action:
+          type: string
+          enum: [water, clean, collect]
