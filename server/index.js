@@ -432,7 +432,7 @@ app.post("/api/garden/actions", (req, res) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDist = path.join(__dirname, "..", "dist");
 app.use(express.static(clientDist));
-app.get("*", (_req, res, next) => {
+app.use((_req, res, next) => {
   if (process.env.NODE_ENV !== "production") return next();
   res.sendFile(path.join(clientDist, "index.html"));
 });
