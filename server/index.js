@@ -10,39 +10,67 @@ app.use(cors());
 app.use(express.json());
 
 const flowerCatalog = {
-  white: {
-    name: "White",
+  luminis: {
+    name: "Luminis",
     chord: [261.63, 329.63, 392],
     tone: "warm",
-    color: "#f6f0df",
+    color: "#f0eadb",
     description: "A calm root note that steadies the whole arrangement.",
   },
-  red: {
-    name: "Red",
-    chord: [293.66, 349.23, 440],
-    tone: "ember",
-    color: "#ff5c5c",
-    description: "Adds a low pulse and a warmer emotional center.",
+  silentia: {
+    name: "Silentia",
+    chord: [220, 277.18, 349.23],
+    tone: "hush",
+    color: "#d4c8a8",
+    description: "A closed bud that hums beneath the surface of perception.",
   },
-  lavender: {
-    name: "Lavender",
+  veridis: {
+    name: "Veridis",
     chord: [329.63, 392, 493.88],
-    tone: "haze",
-    color: "#b9a5ff",
-    description: "Softens the mix with suspended, drifting harmony.",
-  },
-  golden: {
-    name: "Golden",
-    chord: [392, 493.88, 587.33],
     tone: "bright",
-    color: "#ffd166",
-    description: "Brightens the garden with bell-like upper notes.",
+    color: "#8ac268",
+    description: "A branching cluster that brightens the harmonic canopy.",
   },
-  moonbloom: {
-    name: "Moonbloom",
+  trailis: {
+    name: "Trailis",
+    chord: [196, 246.94, 293.66],
+    tone: "drift",
+    color: "#5a7e3a",
+    description: "Trailing vines that pull melody into long, legato phrases.",
+  },
+  sphaera: {
+    name: "Sphaera",
+    chord: [349.23, 440, 523.25],
+    tone: "bell",
+    color: "#6a9e4a",
+    description: "Dense spherical clusters that ring like muted bells.",
+  },
+  aurea: {
+    name: "Aurea",
+    chord: [392, 493.88, 587.33],
+    tone: "shimmer",
+    color: "#d4b558",
+    description: "Golden reeds that add shimmering upper harmonics.",
+  },
+  minima: {
+    name: "Minima",
+    chord: [523.25, 659.25, 783.99],
+    tone: "tinkle",
+    color: "#e0d8c4",
+    description: "Tiny buds so delicate they turn notes into dust motes.",
+  },
+  caelum: {
+    name: "Caelum",
+    chord: [293.66, 440, 587.33],
+    tone: "open",
+    color: "#a8c8e0",
+    description: "An airy cloud of petals that widens every interval.",
+  },
+  nivalis: {
+    name: "Nivalis",
     chord: [220, 277.18, 329.63, 415.3],
     tone: "nocturne",
-    color: "#cae7ff",
+    color: "#f5efe0",
     description: "Only fully opens after dusk, pulling vocals and shimmer forward.",
   },
 };
@@ -104,13 +132,13 @@ const garden = {
   collectedSpores: 0,
   flowers: {
     ...initialFlowers,
-    white: { count: 1, health: 0.82 },
+    luminis: { count: 1, health: 0.82 },
   },
   creatures: Object.fromEntries(
     Object.keys(creatureCatalog).map((id) => [id, { attracted: false, visits: 0 }]),
   ),
   journal: {
-    flowers: ["white"],
+    flowers: ["luminis"],
     creatures: [],
     stems: ["ambience"],
     weather: ["clear"],
@@ -178,10 +206,10 @@ function advanceGarden() {
 
   for (const [id, flower] of Object.entries(garden.flowers)) {
     if (flower.count === 0) continue;
-    const idealWater = id === "moonbloom" ? 0.48 : 0.58;
+    const idealWater = id === "nivalis" ? 0.48 : 0.58;
     const waterScore = 1 - Math.abs(garden.water - idealWater);
-    const pollutionPenalty = garden.pollution * (id === "red" ? 0.5 : 0.8);
-    const nightBonus = id === "moonbloom" && garden.dayPhase === "night" ? 0.08 : 0;
+    const pollutionPenalty = garden.pollution * (id === "trailis" ? 0.5 : 0.8);
+    const nightBonus = id === "nivalis" && garden.dayPhase === "night" ? 0.08 : 0;
     const healthDelta = (waterScore - 0.54 - pollutionPenalty + nightBonus) * 0.025 * elapsedMinutes;
     flower.health = clamp(flower.health + healthDelta, 0.08, 1);
   }
@@ -207,7 +235,7 @@ function handleAction(action, payload = {}) {
     garden.flowers[species].health = clamp(garden.flowers[species].health + 0.12);
     garden.water = clamp(garden.water - 0.05);
     addJournalEntry("flowers", species);
-    return { ok: true, message: `${flowerCatalog[species].name} flower planted.` };
+    return { ok: true, message: `${flowerCatalog[species].name} planted.` };
   }
 
   if (action === "water") {
@@ -266,7 +294,7 @@ function primaryChord() {
     .filter(([, flower]) => flower.count > 0)
     .sort((a, b) => b[1].count * b[1].health - a[1].count * a[1].health);
 
-  if (!planted.length) return flowerCatalog.white.chord;
+  if (!planted.length) return flowerCatalog.luminis.chord;
   return flowerCatalog[planted[0][0]].chord;
 }
 
@@ -301,8 +329,8 @@ function computeMusic() {
   const chord = primaryChord();
   const mood = computeMood();
   const unlockedStems = new Set(["ambience", "fx", ...garden.journal.stems]);
-  const hasMoonbloom = garden.flowers.moonbloom.count > 0;
-  if (hasMoonbloom) unlockedStems.add("vocals");
+  const hasNivalis = garden.flowers.nivalis.count > 0;
+  if (hasNivalis) unlockedStems.add("vocals");
 
   const allStems = [
     {
@@ -355,7 +383,7 @@ function computeMusic() {
     },
     {
       id: "vocals",
-      label: "Moonbloom Voice",
+      label: "Nivalis Voice",
       type: "voice",
       frequencies: [chord[1], chord[2] ?? chord[0] * 2],
       wave: "sine",

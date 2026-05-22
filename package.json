@@ -24,10 +24,12 @@
   },
   "homepage": "https://github.com/inderphull22/Living-Garden#readme",
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@vitejs/plugin-react": "^6.0.2",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "meshoptimizer": "^1.1.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "three": "^0.184.0",
